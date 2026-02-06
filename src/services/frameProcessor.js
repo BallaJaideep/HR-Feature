@@ -1,12 +1,21 @@
-export function getAverageRed(frameData) {
-  const data = frameData.data;
-  let redSum = 0;
-  let count = 0;
+export function extractSignal(frame) {
+  const d = frame.data;
+  let r = 0, g = 0, b = 0, c = 0;
 
-  for (let i = 0; i < data.length; i += 4) {
-    redSum += data[i]; // red channel
-    count++;
+  for (let i = 0; i < d.length; i += 4) {
+    r += d[i];
+    g += d[i + 1];
+    b += d[i + 2];
+    c++;
   }
 
-  return redSum / count;
+  const avgR = r / c;
+  const avgG = g / c;
+  const avgB = b / c;
+
+  const redDominance = avgR - (avgG + avgB) / 2;
+
+  const fingerPresent = avgR > 150 && redDominance > 20;
+
+  return { value: redDominance, fingerPresent };
 }
